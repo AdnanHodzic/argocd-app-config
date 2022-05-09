@@ -1,3 +1,4 @@
+# argocd configuration
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -6,18 +7,22 @@ metadata:
 spec:
   project: default
 
+# 1. git repository argocd will connect to/sync it (source)
   source:
     repoURL: https://github.com/AdnanHodzic/argocd-app-config.git
     targetRevision: HEAD
     path: dev
+  # 2. destination cluster where argocd will apply definitions it found in git repo
   destination: 
     server: https://kubernetes.default.svc
     namespace: myapp
 
+  # necessary to create above myapp ns
   syncPolicy:
     syncOptions:
     - CreateNamespace=true
 
+    # automatically sync all changes pushed to repo (default every 3 mins)
     automated:
       selfHeal: true
       prune: true
